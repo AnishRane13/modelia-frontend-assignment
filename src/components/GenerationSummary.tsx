@@ -135,6 +135,7 @@ const GenerationSummary: React.FC<GenerationSummaryProps> = ({ imageUrl, prompt,
               : 'border-slate-200 bg-slate-50'
           }`}>
             {isComplete ? (
+<<<<<<< HEAD
               <div className="space-y-3">
                 <div className="w-16 h-16 mx-auto bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center shadow-md">
                   <span className="text-2xl">🎨</span>
@@ -149,6 +150,14 @@ const GenerationSummary: React.FC<GenerationSummaryProps> = ({ imageUrl, prompt,
                   <Sparkles className="w-3 h-3" />
                   <span>All systems ready</span>
                 </div>
+=======
+              <div>
+                <p className="font-medium text-green-900 mb-2">Ready to Generate! 🎨</p>
+                <p className="text-sm text-green-700">
+                  All requirements met. Click the Generate button below to create your AI image!
+
+                </p>
+>>>>>>> 4f52f32d145b2c9817dbb90c22c506d243e90189
               </div>
             ) : (
               <div className="space-y-3">
