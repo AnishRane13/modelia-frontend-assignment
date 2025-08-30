@@ -1,4 +1,4 @@
-import { GenerationResponse } from './mockApi'
+import { GenerationResponse } from '../types'
 
 const HISTORY_KEY = 'ai_studio_generations'
 const MAX_HISTORY_ITEMS = 5
@@ -28,7 +28,7 @@ export const getHistory = (): GenerationResponse[] => {
     const parsedHistory = JSON.parse(historyData)
     
     // Convert string dates back to Date objects
-    return parsedHistory.map((item: any) => ({
+    return parsedHistory.map((item: Omit<GenerationResponse, 'createdAt'> & { createdAt: string }) => ({
       ...item,
       createdAt: new Date(item.createdAt)
     }))
