@@ -57,12 +57,13 @@ const GenerationSummary: React.FC<GenerationSummaryProps> = ({ imageUrl, prompt,
 
         {/* Generation Status */}
         <div className="border-t pt-4">
-          <div className={`text-center p-4 rounded-lg ${isComplete ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50 border border-gray-200'}`}>
+          <div className={`text-center p-4 rounded-lg ${isComplete ? 'bg-green-50 border border-green-200' : 'bg-gray-50 border border-gray-200'}`}>
             {isComplete ? (
               <div>
-                <p className="font-medium text-blue-900 mb-2">Ready to Generate! 🎨</p>
-                <p className="text-sm text-blue-700">
-                  All requirements met. Generation button will appear in the next update.
+                <p className="font-medium text-green-900 mb-2">Ready to Generate! 🎨</p>
+                <p className="text-sm text-green-700">
+                  All requirements met. Click the Generate button below to create your AI image!
+
                 </p>
               </div>
             ) : (
@@ -74,11 +75,6 @@ const GenerationSummary: React.FC<GenerationSummaryProps> = ({ imageUrl, prompt,
               </div>
             )}
           </div>
-        </div>
-
-        {/* Coming Soon Notice */}
-        <div className="text-xs text-gray-500 text-center bg-yellow-50 p-3 rounded-lg border border-yellow-200">
-          🚧 Generation functionality coming in the next update! 🚧
         </div>
       </div>
     </div>

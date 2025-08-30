@@ -10,8 +10,6 @@ const PromptInput: React.FC<PromptInputProps> = ({ value, onChange }) => {
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && event.ctrlKey) {
       event.preventDefault()
-      // In the next PR, this will trigger generation
-      console.log('Generate button would be clicked here')
     }
   }
 
@@ -40,7 +38,6 @@ const PromptInput: React.FC<PromptInputProps> = ({ value, onChange }) => {
         
         <div id="prompt-help" className="text-xs text-gray-500">
           <p>💡 Be specific about style, mood, lighting, and artistic direction</p>
-          <p>⌨️ Press Ctrl+Enter to generate (coming in next PR)</p>
         </div>
       </div>
     </div>
