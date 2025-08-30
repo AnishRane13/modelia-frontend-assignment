@@ -91,55 +91,95 @@ const GenerateButton: React.FC<GenerateButtonProps> = ({
 
   if (isGenerating) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4" role="region" aria-label="Generation in progress">
         <button
           onClick={handleAbort}
-          className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-3"
-          aria-label="Stop generation"
+          className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-3 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+          aria-label="Stop generation process"
+          title="Stop generation process"
         >
-          <X className="w-5 h-5" />
+          <X className="w-5 h-5" aria-hidden="true" />
           Stop Generation
         </button>
         
-        <div className="text-center p-4 bg-slate-50 rounded-lg border border-slate-200">
+        <div 
+          className="text-center p-4 bg-slate-50 rounded-lg border border-slate-200"
+          role="status"
+          aria-live="polite"
+          aria-label="Generation status"
+        >
           <div className="flex items-center justify-center gap-3 mb-3">
-            <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+            <Loader2 className="w-6 h-6 animate-spin text-blue-600" aria-hidden="true" />
             <span className="text-slate-800 font-semibold">
               Creating your AI image...
             </span>
           </div>
           
           {retryCount > 0 && (
-            <p className="text-sm text-blue-600">
+            <p className="text-sm text-blue-600" aria-live="polite">
               Retrying... (Attempt {currentAttempt}/3)
             </p>
           )}
+        </div>
+        
+        {/* Screen reader status updates */}
+        <div className="sr-only" aria-live="polite">
+          {retryCount > 0 
+            ? `Retry attempt ${currentAttempt} of 3 in progress`
+            : 'AI image generation in progress'
+          }
         </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" role="region" aria-label="Generate AI image">
       <button
         onClick={handleGenerate}
         disabled={isDisabled}
-        className={`w-full font-bold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-3 ${
+        className={`w-full font-bold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
           isDisabled
             ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
             : 'bg-blue-600 hover:bg-blue-700 text-white hover:shadow-lg transform hover:scale-[1.02] text-lg'
         }`}
-        aria-label="Generate AI image"
+        aria-label={isDisabled ? "Generate AI image (disabled - complete all fields first)" : "Generate AI image"}
+        aria-describedby={isDisabled ? "disabled-reason" : "generate-instructions"}
+        title={isDisabled ? "Complete all fields to enable generation" : "Click to start AI generation"}
       >
-        <Play className="w-6 h-6" />
+        <Play className="w-6 h-6" aria-hidden="true" />
         <span>Generate AI Image</span>
       </button>
       
       {isDisabled && (
-        <p className="text-center text-sm text-slate-500">
+        <p 
+          id="disabled-reason"
+          className="text-center text-sm text-slate-500"
+          role="note"
+          aria-label="Why generation is disabled"
+        >
           Please upload an image and write a description first
         </p>
       )}
+      
+      {!isDisabled && (
+        <p 
+          id="generate-instructions"
+          className="text-center text-sm text-slate-500"
+          role="note"
+          aria-label="Generation instructions"
+        >
+          Click to start AI generation
+        </p>
+      )}
+      
+      {/* Screen reader instructions */}
+      <div className="sr-only" aria-live="polite">
+        {isDisabled 
+          ? "Generate button is disabled. Please upload an image and write a description first."
+          : "Generate button is ready. Click to start AI image generation."
+        }
+      </div>
     </div>
   )
 }

@@ -97,30 +97,33 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect }) => {
 
   if (selectedImage) {
     return (
-      <div className="text-center">
+      <div className="text-center" role="region" aria-label="Selected image preview">
         <div className="relative inline-block">
           <img
             src={selectedImage}
-            alt="Selected image"
+            alt="Selected image for AI transformation"
             className="max-w-full h-32 object-cover rounded-lg shadow-md"
           />
           <button
             onClick={removeImage}
-            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
-            aria-label="Remove image"
+            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            aria-label="Remove selected image"
+            title="Remove selected image"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
-        <p className="text-sm text-slate-600 mt-2">Image selected! Now describe what you want to create.</p>
+        <p className="text-sm text-slate-600 mt-2" id="image-status">
+          Image selected! Now describe what you want to create.
+        </p>
       </div>
     )
   }
 
   return (
-    <div className="text-center">
+    <div className="text-center" role="region" aria-label="Image upload area">
       <div
-        className={`border-2 border-dashed rounded-xl p-8 transition-all duration-300 cursor-pointer ${
+        className={`border-2 border-dashed rounded-xl p-8 transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
           isDragging 
             ? 'border-blue-400 bg-blue-50 scale-[1.02]' 
             : 'border-slate-300 hover:border-blue-400 hover:bg-slate-50'
@@ -131,7 +134,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect }) => {
         onClick={handleClick}
         role="button"
         tabIndex={0}
-        aria-label="Upload image file"
+        aria-label="Upload image file by clicking or dragging and dropping"
+        aria-describedby="upload-instructions"
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()
@@ -148,17 +152,23 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect }) => {
                 ? 'bg-blue-500 text-white shadow-lg' 
                 : 'bg-slate-100 text-slate-400'
             }`}>
-              <Upload className="w-8 h-8" />
+              <Upload className="w-8 h-8" aria-hidden="true" />
             </div>
           </div>
         </div>
         
-        <div className="space-y-2">
+        <div className="space-y-2" id="upload-instructions">
           <p className="text-lg text-slate-700 font-medium">
             <span className="text-blue-600">Click to upload</span> or drag and drop
           </p>
           <p className="text-slate-500">PNG, JPG up to 10MB</p>
         </div>
+      </div>
+      
+      {/* Screen reader instructions */}
+      <div className="sr-only" aria-live="polite">
+        Image upload area. Click to select a file or drag and drop an image here. 
+        Supported formats: PNG and JPG. Maximum file size: 10MB.
       </div>
     </div>
   )

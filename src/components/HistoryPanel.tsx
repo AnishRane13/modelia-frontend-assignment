@@ -45,14 +45,14 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onRestoreGeneration }) => {
 
   if (history.length === 0) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-8 border border-slate-200">
+      <div className="bg-white rounded-2xl shadow-lg p-8 border border-slate-200" role="region" aria-label="Generation history">
         <div className="flex items-center gap-4 mb-6">
           <div className="relative">
             <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-md">
-              <History className="w-6 h-6 text-white" />
+              <History className="w-6 h-6 text-white" aria-hidden="true" />
             </div>
             <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center animate-bounce">
-              <Sparkles className="w-2.5 h-2.5 text-white" />
+              <Sparkles className="w-2.5 h-2.5 text-white" aria-hidden="true" />
             </div>
           </div>
           <div>
@@ -61,14 +61,14 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onRestoreGeneration }) => {
           </div>
         </div>
         
-        <div className="text-center py-12">
+        <div className="text-center py-12" role="status" aria-live="polite">
           <div className="w-20 h-20 mx-auto mb-6 bg-slate-200 rounded-full flex items-center justify-center">
-            <History className="w-10 h-10 text-slate-400" />
+            <History className="w-10 h-10 text-slate-400" aria-hidden="true" />
           </div>
           <p className="text-slate-600 font-medium text-lg mb-2">No generations yet</p>
           <p className="text-slate-500 text-sm">Your AI-generated images will appear here</p>
           <div className="mt-4 flex items-center justify-center gap-2 text-xs text-slate-500 bg-slate-50 px-4 py-2 rounded-full w-fit mx-auto">
-            <Sparkles className="w-3 h-3 text-blue-500" />
+            <Sparkles className="w-3 h-3 text-blue-500" aria-hidden="true" />
             <span>Start creating to build your history</span>
           </div>
         </div>
@@ -77,15 +77,15 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onRestoreGeneration }) => {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 border border-slate-200">
+    <div className="bg-white rounded-2xl shadow-lg p-8 border border-slate-200" role="region" aria-label="Generation history">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <div className="relative">
             <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-md">
-              <History className="w-6 h-6 text-white" />
+              <History className="w-6 h-6 text-white" aria-hidden="true" />
             </div>
             <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center animate-bounce">
-              <Sparkles className="w-2.5 h-2.5 text-white" />
+              <Sparkles className="w-2.5 h-2.5 text-white" aria-hidden="true" />
             </div>
           </div>
           <div>
@@ -95,18 +95,36 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onRestoreGeneration }) => {
         </div>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="text-sm text-purple-600 hover:text-purple-700 transition-colors bg-purple-50 px-3 py-2 rounded-full border border-purple-200 hover:bg-purple-100"
+          className="text-sm text-purple-600 hover:text-purple-700 transition-colors bg-purple-50 px-3 py-2 rounded-full border border-purple-200 hover:bg-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+          aria-label={isExpanded ? "Show fewer history items" : "Show all history items"}
+          aria-expanded={isExpanded}
+          aria-controls="history-items"
         >
           {isExpanded ? 'Show Less' : 'Show All'}
         </button>
       </div>
 
-      <div className="space-y-4">
-        {history.slice(0, isExpanded ? history.length : 3).map((generation) => (
+      <div 
+        id="history-items"
+        className="space-y-4"
+        role="list"
+        aria-label="Generated images history"
+      >
+        {history.slice(0, isExpanded ? history.length : 3).map((generation, index) => (
           <div
             key={generation.id}
-            className="group relative border-2 border-slate-200 rounded-xl p-4 hover:border-purple-300 hover:bg-purple-50 transition-all duration-300 cursor-pointer"
+            className="group relative border-2 border-slate-200 rounded-xl p-4 hover:border-purple-300 hover:bg-purple-50 transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
             onClick={() => onRestoreGeneration(generation)}
+            role="listitem"
+            tabIndex={0}
+            aria-label={`Generated image: ${generation.prompt}`}
+            aria-describedby={`generation-${generation.id}-details`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onRestoreGeneration(generation)
+              }
+            }}
           >
             <div className="flex items-start gap-4">
               {/* Thumbnail - Now showing the actual generated image */}
@@ -119,7 +137,7 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onRestoreGeneration }) => {
                   />
                 </div>
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 rounded-lg flex items-center justify-center">
-                  <RotateCcw className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-all duration-300" />
+                  <RotateCcw className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-all duration-300" aria-hidden="true" />
                 </div>
               </div>
 
@@ -133,7 +151,7 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onRestoreGeneration }) => {
                     {generation.style}
                   </span>
                   <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <Clock className="w-3 h-3 text-purple-500" />
+                    <Clock className="w-3 h-3 text-purple-500" aria-hidden="true" />
                     {formatDate(generation.createdAt)}
                   </div>
                 </div>
@@ -146,12 +164,23 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onRestoreGeneration }) => {
                     e.stopPropagation()
                     handleRemoveFromHistory(generation.id)
                   }}
-                  className="text-red-500 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-all duration-200"
+                  className="text-red-500 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                  aria-label={`Remove ${generation.prompt} from history`}
                   title="Remove from history"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-4 h-4" aria-hidden="true" />
                 </button>
               </div>
+            </div>
+            
+            {/* Hidden details for screen readers */}
+            <div 
+              id={`generation-${generation.id}-details`}
+              className="sr-only"
+            >
+              Prompt: {generation.prompt}. Style: {generation.style}. 
+              Created: {formatDate(generation.createdAt)}. 
+              Click to restore this generation in the main interface.
             </div>
           </div>
         ))}
@@ -161,7 +190,8 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onRestoreGeneration }) => {
         <div className="text-center pt-4">
           <button
             onClick={() => setIsExpanded(true)}
-            className="text-sm text-purple-600 hover:text-purple-700 transition-colors bg-purple-50 px-4 py-2 rounded-full border border-purple-200 hover:bg-purple-100"
+            className="text-sm text-purple-600 hover:text-purple-700 transition-colors bg-purple-50 px-4 py-2 rounded-full border border-purple-200 hover:bg-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+            aria-label={`Show ${history.length - 3} more generations`}
           >
             Show {history.length - 3} more generations
           </button>
@@ -170,9 +200,16 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ onRestoreGeneration }) => {
 
       <div className="mt-6 pt-4 border-t border-slate-200">
         <div className="flex items-center justify-center gap-2 text-xs text-slate-500 bg-slate-50 px-4 py-2 rounded-full w-fit mx-auto">
-          <Sparkles className="w-3 h-3 text-purple-500" />
+          <Sparkles className="w-3 h-3 text-purple-500" aria-hidden="true" />
           <span>Click any generation to restore it in the main interface</span>
         </div>
+      </div>
+      
+      {/* Screen reader summary */}
+      <div className="sr-only" aria-live="polite">
+        History panel with {history.length} generated images. 
+        {isExpanded ? 'Showing all items.' : `Showing first 3 of ${history.length} items.`}
+        Click any generation to restore it in the main interface.
       </div>
     </div>
   )
