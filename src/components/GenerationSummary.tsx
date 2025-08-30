@@ -63,6 +63,7 @@ const GenerationSummary: React.FC<GenerationSummaryProps> = ({ imageUrl, prompt,
                 <p className="font-medium text-green-900 mb-2">Ready to Generate! 🎨</p>
                 <p className="text-sm text-green-700">
                   All requirements met. Click the Generate button below to create your AI image!
+
                 </p>
               </div>
             ) : (

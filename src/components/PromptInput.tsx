@@ -10,8 +10,6 @@ const PromptInput: React.FC<PromptInputProps> = ({ value, onChange }) => {
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && event.ctrlKey) {
       event.preventDefault()
-      // This will now trigger generation through the GenerateButton
-      console.log('Ctrl+Enter pressed - generation will be handled by GenerateButton')
     }
   }
 
@@ -40,7 +38,6 @@ const PromptInput: React.FC<PromptInputProps> = ({ value, onChange }) => {
         
         <div id="prompt-help" className="text-xs text-gray-500">
           <p>💡 Be specific about style, mood, lighting, and artistic direction</p>
-          <p>⌨️ Press Ctrl+Enter as a shortcut (generation handled by Generate button)</p>
         </div>
       </div>
     </div>
