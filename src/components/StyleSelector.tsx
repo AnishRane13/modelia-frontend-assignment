@@ -1,59 +1,53 @@
-import { ChevronDown } from 'lucide-react'
+import { Palette } from 'lucide-react'
 
 interface StyleSelectorProps {
   value: string
   onChange: (value: string) => void
 }
 
-const styles = [
-  { value: 'editorial', label: 'Editorial', description: 'Professional magazine-style photography' },
-  { value: 'streetwear', label: 'Streetwear', description: 'Urban, fashion-forward aesthetic' },
-  { value: 'vintage', label: 'Vintage', description: 'Classic, retro film photography' },
-  { value: 'minimalist', label: 'Minimalist', description: 'Clean, simple, focused composition' },
-  { value: 'dramatic', label: 'Dramatic', description: 'High contrast, moody lighting' }
-]
-
 const StyleSelector: React.FC<StyleSelectorProps> = ({ value, onChange }) => {
-  const selectedStyle = styles.find(style => style.value === value)
+  const styles = [
+    { id: 'editorial', name: 'Editorial', description: 'Professional magazine style', color: 'bg-blue-500' },
+    { id: 'cinematic', name: 'Cinematic', description: 'Movie poster aesthetic', color: 'bg-purple-500' },
+    { id: 'vintage', name: 'Vintage', description: 'Retro film photography', color: 'bg-amber-500' },
+    { id: 'artistic', name: 'Artistic', description: 'Abstract creative expression', color: 'bg-green-500' },
+    { id: 'minimalist', name: 'Minimalist', description: 'Clean and simple design', color: 'bg-gray-500' },
+    { id: 'fantasy', name: 'Fantasy', description: 'Magical and dreamlike', color: 'bg-indigo-500' }
+  ]
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">
-        Style Selection
-      </h2>
-      
-      <div className="space-y-3">
-        <label htmlFor="style-select" className="block text-sm font-medium text-gray-700">
-          Choose your artistic style
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Palette className="w-5 h-5 text-purple-500" />
+        <label className="text-sm font-medium text-slate-700">
+          Choose an art style:
         </label>
-        
-        <div className="relative">
-          <select
-            id="style-select"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white"
-            aria-describedby="style-description"
+      </div>
+      
+      <div className="grid grid-cols-2 gap-3">
+        {styles.map((style) => (
+          <button
+            key={style.id}
+            onClick={() => onChange(style.id)}
+            className={`p-4 rounded-lg border-2 transition-all duration-200 text-left ${
+              value === style.id
+                ? 'border-blue-500 bg-blue-50 shadow-md'
+                : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50'
+            }`}
           >
-            {styles.map((style) => (
-              <option key={style.value} value={style.value}>
-                {style.label}
-              </option>
-            ))}
-          </select>
-          
-          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-        </div>
-        
-        {selectedStyle && (
-          <div id="style-description" className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">
-            <span className="font-medium">{selectedStyle.label}:</span> {selectedStyle.description}
-          </div>
-        )}
-        
-        <div className="text-xs text-gray-500">
-          💡 The style will be applied to your image during AI generation
-        </div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className={`w-3 h-3 rounded-full ${style.color}`}></div>
+              <h3 className={`font-semibold text-sm ${
+                value === style.id ? 'text-slate-800' : 'text-slate-700'
+              }`}>
+                {style.name}
+              </h3>
+            </div>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              {style.description}
+            </p>
+          </button>
+        ))}
       </div>
     </div>
   )

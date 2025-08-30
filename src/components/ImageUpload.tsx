@@ -1,18 +1,19 @@
-import { ChangeEvent, useRef } from 'react'
-import { Upload, Image as ImageIcon } from 'lucide-react'
+import { useState } from 'react'
+import { Upload, X } from 'lucide-react'
 
 interface ImageUploadProps {
   onImageSelect: (imageDataUrl: string | null) => void
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect }) => {
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
   const downscaleImage = (file: File): Promise<string> => {
     return new Promise((resolve) => {
       const canvas = document.createElement('canvas')
       const ctx = canvas.getContext('2d')!
-      const img = new Image()
+      const img = new window.Image()
       
       img.onload = () => {
         const maxSize = 1920
@@ -39,17 +40,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect }) => {
     })
   }
 
-  const handleFileSelect = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
-    // Validate file type
+  const handleFileSelect = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       alert('Please select a valid image file (PNG or JPG)')
       return
     }
 
-    // Validate file size (10MB)
     if (file.size > 10 * 1024 * 1024) {
       alert('File size must be less than 10MB')
       return
@@ -57,6 +53,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect }) => {
 
     try {
       const downscaledImage = await downscaleImage(file)
+      setSelectedImage(downscaledImage)
       onImageSelect(downscaledImage)
     } catch (error) {
       console.error('Error processing image:', error)
@@ -66,53 +63,103 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onImageSelect }) => {
 
   const handleDrop = async (event: React.DragEvent) => {
     event.preventDefault()
+    setIsDragging(false)
     const file = event.dataTransfer.files[0]
     if (file) {
-      const input = fileInputRef.current
-      if (input) {
-        input.files = event.dataTransfer.files
-        await handleFileSelect({ target: { files: event.dataTransfer.files } } as ChangeEvent<HTMLInputElement>)
-      }
+      await handleFileSelect(file)
     }
   }
 
   const handleDragOver = (event: React.DragEvent) => {
     event.preventDefault()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = () => {
+    setIsDragging(false)
+  }
+
+  const handleClick = () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'image/*'
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (file) handleFileSelect(file)
+    }
+    input.click()
+  }
+
+  const removeImage = () => {
+    setSelectedImage(null)
+    onImageSelect(null)
+  }
+
+  if (selectedImage) {
+    return (
+      <div className="text-center">
+        <div className="relative inline-block">
+          <img
+            src={selectedImage}
+            alt="Selected image"
+            className="max-w-full h-32 object-cover rounded-lg shadow-md"
+          />
+          <button
+            onClick={removeImage}
+            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+            aria-label="Remove image"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        <p className="text-sm text-slate-600 mt-2">Image selected! Now describe what you want to create.</p>
+      </div>
+    )
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-        <ImageIcon className="w-5 h-5" />
-        Upload Image
-      </h2>
-      
+    <div className="text-center">
       <div
-        className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors cursor-pointer"
+        className={`border-2 border-dashed rounded-xl p-8 transition-all duration-300 cursor-pointer ${
+          isDragging 
+            ? 'border-blue-400 bg-blue-50 scale-[1.02]' 
+            : 'border-slate-300 hover:border-blue-400 hover:bg-slate-50'
+        }`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
-        onClick={() => fileInputRef.current?.click()}
+        onDragLeave={handleDragLeave}
+        onClick={handleClick}
+        role="button"
+        tabIndex={0}
+        aria-label="Upload image file"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleClick()
+          }
+        }}
       >
-        <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-        <p className="text-gray-600 mb-2">
-          <span className="font-medium text-blue-600">Click to upload</span> or drag and drop
-        </p>
-        <p className="text-sm text-gray-500">
-          PNG, JPG up to 10MB
-        </p>
-        <p className="text-xs text-gray-400 mt-2">
-          Large images will be automatically downscaled to 1920px
-        </p>
+        <div className="mb-4">
+          <div className={`w-16 h-16 mx-auto transition-all duration-300 ${
+            isDragging ? 'scale-110' : ''
+          }`}>
+            <div className={`w-full h-full rounded-full flex items-center justify-center transition-all duration-300 ${
+              isDragging 
+                ? 'bg-blue-500 text-white shadow-lg' 
+                : 'bg-slate-100 text-slate-400'
+            }`}>
+              <Upload className="w-8 h-8" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          <p className="text-lg text-slate-700 font-medium">
+            <span className="text-blue-600">Click to upload</span> or drag and drop
+          </p>
+          <p className="text-slate-500">PNG, JPG up to 10MB</p>
+        </div>
       </div>
-      
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleFileSelect}
-        className="hidden"
-        aria-label="Select image file"
-      />
     </div>
   )
 }
